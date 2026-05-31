@@ -96,6 +96,8 @@ npm run dev
 ---
 
 ## Roadmap
+- [ ] **Dedicated MEV Bot Support**: Expand beyond spatial arbitrage into other MEV strategies (e.g., liquidation bots, sandwiching).
+- [ ] **True No-Code Modularity**: Allow users to drag-and-drop conditions, custom logic, and token filters to build highly bespoke bots without writing code.
 - [ ] **Multi-hop visualization**: Show exactly which intermediate pools the bot is routing through.
 - [ ] **Historical backtesting**: Run the generated strategy against historical Jupiter price data.
 - [ ] **Additional execution environments**: Export to Rust (Anchor) for on-chain execution.
