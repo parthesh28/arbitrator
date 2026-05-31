@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import type { ArbitrageConfig, DryRunResult, ExportPayload } from '@/types/bot';
+import Tooltip from './Tooltip';
 
 interface DryRunPanelProps {
   arbConfig: ArbitrageConfig;
@@ -112,7 +113,7 @@ export default function DryRunPanel({ arbConfig, onActiveNode }: DryRunPanelProp
                 <div>
                   <div className="text-[10px] font-mono text-zinc-500 mb-1 flex items-center gap-1 group relative">
                     Gross Spread
-                    <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="The raw price difference from the round-trip before any fees are deducted.">i</span>
+                    <Tooltip text="The raw price difference from the round-trip before any fees are deducted." />
                   </div>
                   <div className="text-lg font-bold font-mono text-zinc-50">
                     ${(result.roundTripReturn! - result.inputAmount!) * result.currentPrice! > 0 
@@ -123,7 +124,7 @@ export default function DryRunPanel({ arbConfig, onActiveNode }: DryRunPanelProp
                 <div>
                   <div className="text-[10px] font-mono text-zinc-500 mb-1 flex items-center gap-1">
                     Net Profit
-                    <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="Final profit after subtracting Solana TX fees and Jito tip (if enabled).">i</span>
+                    <Tooltip text="Final profit after subtracting Solana TX fees and Jito tip (if enabled)." />
                   </div>
                   <div className={`text-lg font-bold font-mono ${result.estimatedProfit > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     ${result.estimatedProfit.toFixed(4)}
@@ -132,7 +133,7 @@ export default function DryRunPanel({ arbConfig, onActiveNode }: DryRunPanelProp
                 <div>
                   <div className="text-[10px] font-mono text-zinc-500 mb-1 flex items-center gap-1">
                     Price Impact
-                    <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="How much your trade moves the market price against you. Larger trades have higher impact.">i</span>
+                    <Tooltip text="How much your trade moves the market price against you. Larger trades have higher impact." />
                   </div>
                   <div className="text-sm font-mono text-zinc-300">
                     {(result.priceImpact ?? 0).toFixed(4)}%
@@ -141,7 +142,7 @@ export default function DryRunPanel({ arbConfig, onActiveNode }: DryRunPanelProp
                 <div>
                   <div className="text-[10px] font-mono text-zinc-500 mb-1 flex items-center gap-1">
                     Gas + Fees
-                    <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="Solana base TX fee (~0.00001 SOL) plus Jito validator tip if enabled. Converted to USD at current price.">i</span>
+                    <Tooltip text="Solana base TX fee (~0.00001 SOL) plus Jito validator tip if enabled. Converted to USD at current price." />
                   </div>
                   <div className="text-sm font-mono text-zinc-300">
                     ${(result.gasAndFeesUsdc ?? 0).toFixed(4)}

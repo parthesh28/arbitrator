@@ -91,6 +91,23 @@ npm run dev
 
 4. Open your browser to `http://localhost:3000`
 
+*(Note: The web platform itself does not require any environment variables to run locally. The generated bot will require its own `.env` file containing RPC URLs and your private key.)*
+
+---
+
+## Roadmap
+- [ ] **Multi-hop visualization**: Show exactly which intermediate pools the bot is routing through.
+- [ ] **Historical backtesting**: Run the generated strategy against historical Jupiter price data.
+- [ ] **Additional execution environments**: Export to Rust (Anchor) for on-chain execution.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
 ## Disclaimer
 
 This software is for educational and experimental purposes only. Cryptocurrency trading and MEV arbitrage involve significant risk of financial loss. The generated code is provided as-is without any warranties or guarantees of profitability. Always test with small amounts first and review the generated source code before executing trades with real capital.

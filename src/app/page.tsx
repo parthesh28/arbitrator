@@ -21,7 +21,7 @@ const DEFAULT_ARB: ArbitrageConfig = {
 type PreviewTab = 'code' | 'graph' | 'analysis';
 
 export default function Home() {
-  const [screen, setScreen] = useState<'landing' | 'builder'>('landing');
+  const [screen, setScreen] = useState<'landing' | 'loading' | 'builder'>('landing');
   const [step, setStep] = useState(0);
   const [arbConfig, setArbConfig] = useState<ArbitrageConfig>(DEFAULT_ARB);
   const [isExporting, setIsExporting] = useState(false);
@@ -30,8 +30,11 @@ export default function Home() {
   const [activeGraphNode, setActiveGraphNode] = useState(-1);
 
   const handleStartBuilder = useCallback(() => {
-    setScreen('builder');
-    setStep(0);
+    setScreen('loading');
+    setTimeout(() => {
+      setScreen('builder');
+      setStep(0);
+    }, 1000); // 1 second smooth transition
   }, []);
 
   const handleReset = useCallback(() => {
@@ -78,6 +81,20 @@ export default function Home() {
         <Walkthrough />
         <FeatureCards />
         <Footer />
+      </div>
+    );
+  }
+
+  // ─── Loading ───
+  if (screen === 'loading') {
+    return (
+      <div className="min-h-screen brutal-grid flex flex-col items-center justify-center bg-zinc-950">
+        <div className="text-zinc-50 font-mono text-[11px] uppercase tracking-widest animate-pulse">
+          Initializing Environment
+        </div>
+        <div className="w-48 h-0.5 bg-zinc-800 relative overflow-hidden mt-6">
+          <div className="absolute top-0 left-0 h-full bg-orange-500 w-1/3 animate-[brutal-marquee_1s_linear_infinite]" />
+        </div>
       </div>
     );
   }

@@ -26,7 +26,7 @@ const FEATURES = [
 export default function FeatureCards() {
   return (
     <section className="py-20 px-6 bg-zinc-950 border-b border-zinc-800" id="features">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="mb-10">
           <h2 className="text-sm font-bold font-mono text-orange-500 mb-2">
             How it works

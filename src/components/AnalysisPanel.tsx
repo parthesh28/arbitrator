@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import type { ArbitrageConfig } from '@/types/bot';
+import Tooltip from './Tooltip';
 
 interface AnalysisPanelProps {
   arbConfig: ArbitrageConfig;
@@ -10,16 +11,7 @@ interface AnalysisPanelProps {
 export default function AnalysisPanel({ arbConfig }: AnalysisPanelProps) {
   const analysis = useMemo(() => {
     // CU calculation based on actual Solana transaction composition:
-    // - Base TX overhead: ~5,000 CU
-    // - Create WSOL ATA (CreateAssociatedTokenAccount): ~30,000 CU
-    // - SyncNative instruction: ~3,000 CU  
-    // - Each Jupiter swap (single route): ~80,000-120,000 CU depending on DEX
-    // - CloseAccount: ~3,000 CU
-    // - Jito tip transfer: ~3,000 CU
-    // We have 2 swap legs, so ~200,000-280,000 CU for the base case
-    // More venues can lead to multi-hop routes (2-3 intermediate swaps) which cost more
-    
-    let baseCu = 44_000; // ATA creation + sync + close + base overhead
+    let baseCu = 44_000; // ATA creation (30k) + sync (3k) + close (3k) + base overhead (8k)
     const cuPerSwapLeg = 80_000 + (arbConfig.exchanges.length * 15_000); // more venues = more complex routing
     baseCu += cuPerSwapLeg * 2; // two swap legs
     if (arbConfig.executionSpeed === 'jito') {
@@ -73,18 +65,21 @@ export default function AnalysisPanel({ arbConfig }: AnalysisPanelProps) {
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1 text-[10px] font-mono text-zinc-500">
               <span>Compute Units</span>
-              <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="Computational cost on Solana. Your transaction uses this many CU out of the 1.4M per-transaction limit. Higher CU = higher priority fees.">i</span>
+              <Tooltip text="Estimated computational cost. Your transaction uses this many CU out of the 1.4M per-transaction limit." />
             </div>
             <span className="text-[11px] font-mono font-bold text-zinc-200">
               {analysis.cuEstimate.toLocaleString()} / {(analysis.cuMax / 1000).toFixed(0)}K
             </span>
           </div>
-          <div className="h-1.5 bg-zinc-900 border border-zinc-800 relative">
+          <div className="h-1.5 bg-zinc-900 border border-zinc-800 relative mb-2">
             <div 
               className="absolute top-0 left-0 h-full bg-orange-500/70 transition-all duration-300"
               style={{ width: `${(analysis.cuEstimate / analysis.cuMax) * 100}%` }}
             />
           </div>
+          <p className="text-[9px] font-mono text-zinc-600 leading-tight">
+            Derived from exact instruction composition: WSOL ATA creation (30k) + Jupiter Route 1 (~80k) + Jupiter Route 2 (~80k) + WSOL Close (3k).
+          </p>
         </div>
 
         {/* RPC Load */}
@@ -92,7 +87,7 @@ export default function AnalysisPanel({ arbConfig }: AnalysisPanelProps) {
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1 text-[10px] font-mono text-zinc-500">
               <span>API Calls / min</span>
-              <span className="cursor-help text-zinc-600 hover:text-zinc-400" title="How often the bot queries Jupiter for prices. Each poll checks both legs. Free tier: 30/min. With API key: 600/min.">i</span>
+              <Tooltip text="How often the bot queries Jupiter for prices. Free tier is 30/min. With API key it is 600/min." />
             </div>
             <span className="text-[11px] font-mono font-bold text-zinc-200">{analysis.rpcCallsPerMin}</span>
           </div>

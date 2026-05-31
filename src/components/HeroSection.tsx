@@ -6,7 +6,9 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onStart }: HeroSectionProps) {
   return (
-    <section className="relative flex flex-col pt-32 pb-24 px-6 bg-transparent overflow-hidden">
+    <section className="relative flex-1 flex flex-col pt-32 pb-24 px-6 bg-transparent overflow-hidden">
+      {/* Gradient fade for the grid at the bottom */}
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-zinc-950 to-transparent z-0" />
       <div className="relative z-10 flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
         <div>
           <p className="text-[11px] font-mono text-zinc-500 mb-6 tracking-wide">

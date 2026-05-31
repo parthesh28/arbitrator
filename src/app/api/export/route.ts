@@ -381,8 +381,11 @@ export async function executeTrade(opportunity: ArbOpportunity): Promise<void> {
   const owner = wallet.publicKey;
   log('EXEC', \`Wallet: \${owner.toBase58().slice(0, 8)}... | Target Profit: $\${opportunity.profitUsdc.toFixed(4)}\`);
 
-  // We explicitly tell Jupiter NOT to wrap/unwrap SOL since we are stitching two swaps together
-  // and need the WSOL account to persist between the two swap instructions.
+  // ─── Jupiter Swap Configuration ───
+  // We explicitly tell Jupiter NOT to wrap/unwrap SOL automatically.
+  // Why? Because we are stitching two separate swaps (Leg 1 & Leg 2) together into a single atomic transaction.
+  // If Jupiter wrapped and unwrapped SOL for each leg, the WSOL account wouldn't persist between them.
+  // Instead, we manage the WSOL lifecycle manually across the entire transaction.
   const swapConfig = {
     userPublicKey: owner.toBase58(),
     wrapAndUnwrapSol: false,
@@ -393,7 +396,7 @@ export async function executeTrade(opportunity: ArbOpportunity): Promise<void> {
   const jupHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
   if (BOT.JUPITER_API_KEY) jupHeaders['x-api-key'] = BOT.JUPITER_API_KEY;
 
-  // Get Leg 1 swap instructions
+  // 1. Fetch exact transaction instructions for Leg 1 (Input Token -> USDC)
   const buyRes = await fetch(\`\${BOT.JUPITER_API}/swap-instructions\`, {
     method: 'POST', headers: jupHeaders,
     body: JSON.stringify({ quoteResponse: opportunity.buyQuote, ...swapConfig }),
@@ -402,7 +405,7 @@ export async function executeTrade(opportunity: ArbOpportunity): Promise<void> {
   const buySwap = await buyRes.json();
   if (buySwap.error) throw new Error(\`Jupiter Leg 1: \${buySwap.error}\`);
 
-  // Get Leg 2 swap instructions
+  // 2. Fetch exact transaction instructions for Leg 2 (USDC -> Input Token)
   const sellRes = await fetch(\`\${BOT.JUPITER_API}/swap-instructions\`, {
     method: 'POST', headers: jupHeaders,
     body: JSON.stringify({ quoteResponse: opportunity.sellQuote, ...swapConfig }),
@@ -411,7 +414,10 @@ export async function executeTrade(opportunity: ArbOpportunity): Promise<void> {
   const sellSwap = await sellRes.json();
   if (sellSwap.error) throw new Error(\`Jupiter Leg 2: \${sellSwap.error}\`);
 
-  // Combine and deduplicate lookup tables
+  // ─── Address Lookup Table (ALT) Deduplication ───
+  // Solana transactions have a strict 1232 byte size limit.
+  // Since we are combining two complex swaps, the transaction can easily exceed this limit.
+  // We extract ALTs from both swap legs, deduplicate them, and fetch the table accounts.
   const lookupTablesMap = new Map<string, AddressLookupTableAccount>();
   const allAlts = [...(buySwap.addressLookupTableAddresses || []), ...(sellSwap.addressLookupTableAddresses || [])];
   
@@ -423,12 +429,14 @@ export async function executeTrade(opportunity: ArbOpportunity): Promise<void> {
   }
   const lookupTables = Array.from(lookupTablesMap.values());
 
-  // Manually build WSOL wrapping instructions
+  // ─── Manual WSOL Lifecycle Management ───
+  // To trade SOL natively through smart contracts, it must be Wrapped SOL (WSOL).
   const wsolAta = getAssociatedTokenAddressSync(NATIVE_MINT, owner);
   
   const ixs: TransactionInstruction[] = [];
 
-  // Setup WSOL account and fund it
+  // Step A: Create the WSOL token account (if it doesn't exist) and fund it with our trade amount
+
   ixs.push(createAssociatedTokenAccountIdempotentInstruction(owner, wsolAta, owner, NATIVE_MINT));
   ixs.push(SystemProgram.transfer({ fromPubkey: owner, toPubkey: wsolAta, lamports: BOT.TRADE_AMOUNT_LAMPORTS }));
   ixs.push(createSyncNativeInstruction(wsolAta));

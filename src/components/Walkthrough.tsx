@@ -51,13 +51,13 @@ export default function Walkthrough() {
   };
 
   return (
-    <section className="py-20 px-6 bg-zinc-950 brutal-border-b" id="walkthrough">
-      <div className="max-w-3xl mx-auto">
+    <section className="py-20 px-6 bg-zinc-950 border-b border-zinc-800" id="walkthrough">
+      <div className="max-w-4xl mx-auto">
         <div className="mb-12">
-          <h2 className="text-sm font-bold font-mono text-orange-500 uppercase tracking-widest mb-2">
+          <h2 className="text-sm font-bold font-mono text-orange-500 mb-2">
             Before You Start
           </h2>
-          <p className="text-2xl font-bold uppercase tracking-tight text-zinc-50 max-w-lg">
+          <p className="text-2xl font-bold tracking-tight text-zinc-50 max-w-lg">
             Everything you need to know, explained simply.
           </p>
         </div>
