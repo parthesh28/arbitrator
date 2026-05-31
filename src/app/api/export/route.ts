@@ -647,7 +647,7 @@ const README_MD = [
   '',
   'Trading involves risk of financial loss. This code is provided as-is with no',
   'guarantees of profitability. Always test with small amounts first.',
-].join('\\n') + '\\n';
+].join('\n') + '\n';
 
 // ── Main Route ──
 
