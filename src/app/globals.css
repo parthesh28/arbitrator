@@ -1,26 +1,241 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ─── Design System Tokens (Brutalist / Industrial) ─── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-border: var(--border-color);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #09090b; /* zinc-950 */
+  --foreground: #fafafa; /* zinc-50 */
+  --surface: #18181b; /* zinc-900 */
+  --surface-alt: #27272a; /* zinc-800 */
+  --border-color: #3f3f46; /* zinc-700 */
+  --muted: #a1a1aa; /* zinc-400 */
+  --accent: #f97316; /* orange-500 */
 }
+
+/* ─── Base ─── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-mono, 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-sans {
+  font-family: var(--font-inter, 'Inter', ui-sans-serif, system-ui, sans-serif);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border-color); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ─── Brutalist Grid Background ─── */
+.brutal-grid {
+  background-image: 
+    linear-gradient(to right, var(--border-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
+}
+
+/* ─── Brutalist Components ─── */
+.brutal-border {
+  border: 1px solid var(--border-color);
+}
+.brutal-border-t { border-top: 1px solid var(--border-color); }
+.brutal-border-b { border-bottom: 1px solid var(--border-color); }
+.brutal-border-l { border-left: 1px solid var(--border-color); }
+.brutal-border-r { border-right: 1px solid var(--border-color); }
+
+.brutal-btn-primary {
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  transition: all 0.15s ease;
+}
+.brutal-btn-primary:hover:not(:disabled) {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: 3px 3px 0 var(--accent);
+  transform: translate(-1px, -1px);
+}
+.brutal-btn-primary:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--accent);
+  transform: translate(0, 0);
+}
+.brutal-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.brutal-btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid var(--border-color);
+  transition: all 0.15s ease;
+}
+.brutal-btn-secondary:hover:not(:disabled) {
+  border-color: var(--foreground);
+  color: var(--background);
+  background: var(--foreground);
+}
+
+/* ─── Form Controls ─── */
+input[type="number"],
+input[type="text"],
+select {
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  color: var(--foreground);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.8125rem;
+  font-family: var(--font-geist-mono);
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.1s ease;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--accent);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+/* ─── Range Slider ─── */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 2px;
+  background: var(--border-color);
+  outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  background: var(--accent);
+  cursor: pointer;
+  border-radius: 0;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 0;
+  border: none;
+}
+
+/* ─── Checkbox ─── */
+input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none;
+  width: 1rem; height: 1rem;
+  border: 1px solid var(--border-color);
+  background: transparent; cursor: pointer;
+  flex-shrink: 0; border-radius: 0;
+}
+input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ─── Tooltip ─── */
+.tooltip-trigger .tooltip-content {
+  display: none;
+  pointer-events: none;
+}
+.tooltip-trigger:hover .tooltip-content {
+  display: block;
+}
+
+/* ─── Code Highlighting (PrismJS Custom Brutalist Theme) ─── */
+pre[class*="language-"] {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  border-radius: 0 !important;
+  text-shadow: none !important;
+}
+code[class*="language-"], pre[class*="language-"] {
+  color: var(--foreground);
+  font-family: var(--font-geist-mono, monospace);
+  font-size: 0.75rem;
+  line-height: 1.8;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  tab-size: 2;
+}
+
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #71717a; font-style: italic; }
+.token.punctuation { color: #52525b; }
+.token.namespace { opacity: .7; }
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted { color: #f97316; }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #a3e635; }
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: #e4e4e7; }
+.token.atrule, .token.attr-value, .token.keyword { color: #e4e4e7; font-weight: bold; }
+.token.function, .token.class-name { color: #d4d4d8; }
+.token.regex, .token.important, .token.variable { color: #fb923c; }
+
+/* ─── Stepper ─── */
+.stepper-line { transition: background-color 0.2s ease; }
+.step-item { color: var(--muted); }
+.step-item.active { color: var(--accent); font-weight: bold; }
+.step-item.done { color: var(--foreground); }
+
+/* ─── Animations ─── */
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.animate-blink { animation: blink 1s infinite; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fade-in 0.3s ease-out; }
+
+@keyframes fade-in-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in-up { animation: fade-in-up 0.4s ease-out; }
+
+.brutal-marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.brutal-marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: brutal-marquee 15s linear infinite;
+}
+@keyframes brutal-marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
 }
